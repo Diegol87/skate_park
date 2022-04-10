@@ -18,7 +18,7 @@
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Repita la password</label>
-            <input class="form-control m-auto" type="password" />
+            <input class="form-control m-auto" type="password" name="password_confirm" />
           </div>
           <div class="form-group col-12 col-sm-6 mb-3">
             <label>Años de experiencia</label>
@@ -46,6 +46,15 @@
       e.preventDefault()
 
       const formData = new FormData(formulario)
+
+      if (formulario.password || formulario.confirm_password) {
+                if (event.target.password.value !== event.target.password_confirm.value) {
+                    event.preventDefault();
+                    return alert(
+                        'Las contraseñas no coinciden'
+                    );
+                }
+            }
 
       try {
         const respuesta = await fetch('/api/v1/users', {

@@ -1,5 +1,4 @@
 const { Pool } = require('pg')
-const { password } = require('pg/lib/defaults')
 const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:esadiz87@localhost:5432/skatepark'
 
 const pool = process.env.DATABASE_URL  
@@ -152,7 +151,7 @@ const editUserDB = async({ id, nombre, password, anos_experiencia, especialidad 
         
         return {
             ok: true,
-            skater: respuesta.rows[0]
+            skater: respuesta.rows
         }
 
     } catch (err) {
