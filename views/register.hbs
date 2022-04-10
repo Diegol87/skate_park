@@ -1,0 +1,70 @@
+<h1 class="mb-4">Skate Park</h1>
+<h3>Registro</h3>
+
+<div>
+      <form id="formularioRegister">
+        <div class="form-group row w-50 m-auto my-4">
+          <div class="form-group col-12 col-sm-6 mb-3">
+            <label>Email</label>
+            <input class="form-control m-auto" name="email" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Nombre</label>
+            <input class="form-control m-auto" name="nombre" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Password</label>
+            <input class="form-control m-auto mb-3" type="password" name="password" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Repita la password</label>
+            <input class="form-control m-auto" type="password" />
+          </div>
+          <div class="form-group col-12 col-sm-6 mb-3">
+            <label>Años de experiencia</label>
+            <input class="form-control m-auto" name="anos_experiencia" />
+          </div>
+          <div class="form-group col-12 col-sm-6">
+            <label>Especialidad</label>
+            <input class="form-control m-auto" name="especialidad" />
+          </div>
+          <div class="form-group col-12 col-sm-12">
+            <label>Foto de perfil</label>
+            <input type="file" name="foto" />
+          </div>
+        </div>
+        <button class="btn btn-info mb-3">Registrarme</button>
+        <p><a href="/login"> Iniciar sesión</a></p>
+      </form>
+
+</div>
+
+  <script>
+    const formulario = document.getElementById('formularioRegister')
+
+    formulario.addEventListener('submit', async(e) => {
+      e.preventDefault()
+
+      const formData = new FormData(formulario)
+
+      try {
+        const respuesta = await fetch('/api/v1/users', {
+          method: 'post',
+          body: formData
+        })
+
+        const data = await respuesta.json()
+
+        if(!data.ok) {
+          return alert(data.msg)
+        }
+
+        localStorage.setItem('token', data.token)
+        window.location.href = "/login"
+
+      } catch(err) {
+        console.log(err)
+      }
+
+    })
+  </script>

@@ -1,0 +1,118 @@
+
+    <h1>Skate Park</h1>
+
+    <div class="py-4">
+      <h2>Administración</h2>
+      <hr class="w-200" />
+
+      <table class="table w-50 m-auto">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Foto</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Años de experiencia</th>
+            <th scope="col">Especialidad</th>
+            <th scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody id="table_admin">
+          
+        </tbody>
+      </table>
+        <a href="/">Inicio</a> |
+        <a href="/details">Mi perfil</a> |
+        <a id="close-sesion" class="link">Cerrar Sesion</a>
+    </div>
+
+<script>
+  const table = document.getElementById('table_admin')
+  const pintarDatos = (skaters) => {
+    table.innerHTML = ''
+    skaters
+      .forEach(s => {
+        table.innerHTML += `
+          <tr>
+              <th scope="row">${s.id}</th>
+              <td>
+                <img src="/avatars/${s.foto}" class="list-photos">
+              </td>
+              <td>${s.nombre}</td>
+              <td>${s.anos_experiencia}</td>
+              <td>${s.especialidad}</td>
+              ${s.estado 
+                ? "<td class='text-success font-weight-bold'>Aprobado</td>" 
+                : "<td class='text-danger font-weight-bold'>En revisión</td>"}
+               <td>${s.estado 
+                 ? `` 
+                 : `<button onClick="skaterStatus(${s.id}, ${true})" class="btn btn-success">Pasar a aprobado</button>`}</td>
+      </tr>
+        `
+    })
+  }
+
+  document.addEventListener('DOMContentLoaded', async() => {
+    if(!localStorage.getItem('token')) {
+      window.location.href = "/login"
+    }
+
+    const token = localStorage.getItem('token')
+
+    try {
+      const respuesta = await fetch('api/v1/users', {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+
+      const data = await respuesta.json()
+    
+
+      if(!data.ok) {
+        window.location.href = "/login"
+      }
+
+      pintarDatos(data.skaters)
+
+    } catch(err) {
+      localStorage.removeItem('token')
+      window.location.href = "/login"
+    }
+  })
+
+  const skaterStatus = async(id, status) => {
+    const body = JSON.stringify({ id, status })
+    try {
+      const respuesta = await fetch('api/v1/users/status', {
+        method: 'put',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: body
+
+      })
+
+      const data = await respuesta.json()
+      if(!data.ok) {
+        window.location.href = "/login"
+      }
+      window.location.href = "/adminaccess"
+
+    } catch(err) {
+      localStorage.removeItem('token')
+      window.location.href = "/login"
+    }
+  }
+
+  const closeSesion = document.getElementById('close-sesion')
+
+  closeSesion.addEventListener('click', () => {
+
+    localStorage.removeItem('token')
+    window.location.href = "/login"
+  })
+   
+</script>
+  

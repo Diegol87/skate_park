@@ -1,0 +1,93 @@
+
+
+    <h1>Skate Park</h1>
+
+    <div id="alert"></div>
+
+    <div class="py-4">
+      <h2>Lista de participantes</h2>
+
+      <hr />
+
+      <table class="table table-dark">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Foto</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Años de experiencia</th>
+            <th scope="col">Especialidad</th>
+            <th scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody id="table">
+          
+        </tbody>
+      </table>
+      <a href="/details">Mi perfil</a> |
+      <a id="admin" href="/adminaccess">Administrador datos</a> |
+      <a id="close-sesion" class="link">Cerrar Sesion</a>
+    </div>
+
+<script>
+  const alertContainer = document.getElementById('alert')
+  const table = document.getElementById('table')
+  const pintarDatos = (skaters) => {
+    table.innerHTML = ''
+    skaters.forEach(s => {
+      table.innerHTML += `
+      <tr>
+        <th scope="row">${s.id}</th>
+          <td>
+              <img src="/avatars/${s.foto}" class="list-photo">
+          </td>
+          <td>${s.nombre}</td>
+          <td>${s.anos_experiencia}</td>
+          <td>${s.especialidad}</td>
+          ${s.estado
+            ? '<td class="text-success font-weight-bold">Aprobado</td>'
+            : '<td class="text-warning font-weight-bold">En revision</td>'
+            }
+      </tr>
+      `
+    })
+  }
+
+  document.addEventListener('DOMContentLoaded', async() => {
+    if(!localStorage.getItem('token')) {
+      window.location.href = "/login"
+    }
+
+  const token = localStorage.getItem('token')
+  
+  try {
+    const respuesta = await fetch('api/v1/users', {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+
+    const data = await respuesta.json()
+
+    if(!data.ok) {
+      window.location.href = "/login"
+    }
+
+    pintarDatos(data.skaters)
+
+    } catch(err) {
+      localStorage.removeItem('token')
+      window.location.href = "/login"
+    }
+  })
+
+  const closeSesion = document.getElementById('close-sesion')
+
+  closeSesion.addEventListener('click', () => {
+
+    localStorage.removeItem('token')
+    window.location.href = "/login"
+  })
+
+</script>
